@@ -1,17 +1,17 @@
-FROM node:bullseye AS builder
+FROM node:24-trixie AS builder
 
 WORKDIR /workerd
 
 RUN apt-get update
-RUN apt-get install -y curl build-essential git lsb-release wget software-properties-common gnupg
+RUN apt-get install -y curl build-essential git lsb-release wget gnupg
 
 RUN wget https://apt.llvm.org/llvm.sh
 RUN chmod +x llvm.sh
-RUN ./llvm.sh 14 all
+RUN ./llvm.sh 19 all
 COPY . .
 
-RUN echo "build:linux --action_env=CC=/usr/lib/llvm-14/bin/clang --action_env=CXX=/usr/lib/llvm-14/bin/clang++" >> .bazelrc
-RUN echo "build:linux --host_action_env=CC=/usr/lib/llvm-14/bin/clang --host_action_env=CXX=/usr/lib/llvm-14/bin/clang++" >> .bazelrc
+RUN echo "build:linux --action_env=CC=/usr/lib/llvm-19/bin/clang --action_env=CXX=/usr/lib/llvm-19/bin/clang++" >> .bazelrc
+RUN echo "build:linux --host_action_env=CC=/usr/lib/llvm-19/bin/clang --host_action_env=CXX=/usr/lib/llvm-19/bin/clang++" >> .bazelrc
 COPY .bazel-cache /bazel-disk-cache
 RUN npm install -g pnpm@latest-7
 RUN pnpm install

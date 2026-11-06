@@ -54,10 +54,14 @@ http_archive(
 
 http_archive(
     name = "rules_python",
-    sha256 = "84aec9e21cc56fbc7f1335035a71c850d1b9b5cc6ff497306f84cced9a769841",
-    strip_prefix = "rules_python-0.23.1",
-    url = "https://github.com/bazelbuild/rules_python/releases/download/0.23.1/rules_python-0.23.1.tar.gz",
+    sha256 = "9d04041ac92a0985e344235f5d946f71ac543f1b1565f2cdbc9a2aaee8adf55b",
+    strip_prefix = "rules_python-0.26.0",
+    url = "https://github.com/bazelbuild/rules_python/releases/download/0.26.0/rules_python-0.26.0.tar.gz",
 )
+
+load("@rules_python//python:repositories.bzl", "py_repositories")
+
+py_repositories()
 
 http_archive(
     name = "com_google_benchmark",
@@ -280,7 +284,16 @@ nodejs_register_toolchains(
         # "WORKERS_MIRROR_URL/https://nodejs.org/dist/v{version}/{filename}",
         "https://nodejs.org/dist/v{version}/{filename}",
     ],
-    node_version = "18.10.0",
+    node_repositories = {
+        # The rules_nodejs bundled with rules_js does not know Node 24 yet. Checksums come from
+        # https://nodejs.org/dist/v24.22.1/SHASUMS256.txt
+        "24.22.1-darwin_amd64": ("node-v24.22.1-darwin-x64.tar.gz", "node-v24.22.1-darwin-x64", "d132557e7ee2b85af08b0c8c34338e65c6430f2238d01f727728ef42dc83b035"),
+        "24.22.1-darwin_arm64": ("node-v24.22.1-darwin-arm64.tar.gz", "node-v24.22.1-darwin-arm64", "89c682593d76cd44233fa53b1563264e7de9cbb189cad169135c5b4fadfbc0a7"),
+        "24.22.1-linux_amd64": ("node-v24.22.1-linux-x64.tar.xz", "node-v24.22.1-linux-x64", "6c172a9ab6718f7b801fb5a7bd486af2ee5e32758086a04b84fcce2aa77095e6"),
+        "24.22.1-linux_arm64": ("node-v24.22.1-linux-arm64.tar.xz", "node-v24.22.1-linux-arm64", "dbabf7a1cbf947e6059ffad2c27b80041db97dea1e553b62afdee7f13fca336e"),
+        "24.22.1-windows_amd64": ("node-v24.22.1-win-x64.zip", "node-v24.22.1-win-x64", "d2046d28c2c3dcd211ac5145c0bf30e2047ef9dfb306693c8c6e2eccd8b95fa5"),
+    },
+    node_version = "24.22.1",
 )
 
 load("@aspect_rules_ts//ts:repositories.bzl", "rules_ts_dependencies", TS_LATEST_VERSION = "LATEST_VERSION")
@@ -363,13 +376,13 @@ new_git_repository(
 load("@rules_python//python:repositories.bzl", "python_register_toolchains")
 
 python_register_toolchains(
-    name = "python3_11",
+    name = "python3_12",
     ignore_root_user_error = True,
     # https://github.com/bazelbuild/rules_python/blob/main/python/versions.bzl
-    python_version = "3.11",
+    python_version = "3.12",
 )
 
-load("@python3_11//:defs.bzl", "interpreter")
+load("@python3_12//:defs.bzl", "interpreter")
 load("@rules_python//python:pip.bzl", "pip_parse")
 
 pip_parse(
